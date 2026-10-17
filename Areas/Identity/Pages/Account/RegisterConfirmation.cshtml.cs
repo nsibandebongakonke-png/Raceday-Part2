@@ -17,13 +17,13 @@ namespace Raceday.Areas.Identity.Pages.Account;
 [AllowAnonymous]
 public class RegisterConfirmationModel : PageModel
 {
-    private readonly UserManager<IdentityUser> _userManager;
-    private readonly IEmailSender _sender;
+    private readonly UserManager<ApplicationUser> _userManagerField;
+    private readonly IEmailSender _emailSender;
 
-    public RegisterConfirmationModel(UserManager<IdentityUser> userManager, IEmailSender sender)
+    public RegisterConfirmationModel(UserManager<ApplicationUser> userManager, IEmailSender sender)
     {
-        _userManager = userManager;
-        _sender = sender;
+        _userManagerField = userManager;
+        _emailSender = sender;
     }
 
     /// <summary>
@@ -52,7 +52,7 @@ public class RegisterConfirmationModel : PageModel
         }
         returnUrl = returnUrl ?? Url.Content("~/");
 
-        var user = await _userManager.FindByEmailAsync(email);
+        var user = await _userManagerField.FindByEmailAsync(email);
         if (user == null)
         {
             return NotFound($"Unable to load user with email '{email}'.");
@@ -63,8 +63,8 @@ public class RegisterConfirmationModel : PageModel
         DisplayConfirmAccountLink = true;
         if (DisplayConfirmAccountLink)
         {
-            var userId = await _userManager.GetUserIdAsync(user);
-            var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            var userId = await _userManagerField.GetUserIdAsync(user);
+            var code = await _userManagerField.GenerateEmailConfirmationTokenAsync(user);
             code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
             EmailConfirmationUrl = Url.Page(
                 "/Account/ConfirmEmail",
