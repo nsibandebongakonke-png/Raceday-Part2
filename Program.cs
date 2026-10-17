@@ -10,9 +10,11 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>() 
     .AddEntityFrameworkStores<ApplicationDbContext>();
+
+//builder.Services.AddScoped<ProfilePictureUrlService, ProfilePictureUrlService>();
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
@@ -32,14 +34,14 @@ using (var scope = app.Services.CreateScope())
             await roleManager.CreateAsync(new IdentityRole(role));
         }
     }
-    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
     string email = "admin@admin.com";
     string password = "Admin@123";
 
     if (await userManager.FindByEmailAsync(email) == null)
     {
-        var user = new IdentityUser { UserName = email, Email = email, EmailConfirmed = true };
+        var user = new ApplicationUser { UserName = email, Email = email, EmailConfirmed = true };
         var result = await userManager.CreateAsync(user, password);
         if (result.Succeeded)
         {
@@ -62,6 +64,7 @@ using (var scope = app.Services.CreateScope())
     }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
