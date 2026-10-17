@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Data\ApplicationUser.cs" />
+    <!-- Allow Data\ApplicationUser.cs to be compiled so the ApplicationUser type can be used in the project -->
   </ItemGroup>
 
   <ItemGroup>
